@@ -20,3 +20,23 @@ The simplest usage of `Slugger` would be something like the following:
 This creates an instance of a `Slugger` with the default configuration, which
 splits the input on whitespace, removes special characters, and converts the
 output to lowercase.
+
+## Word Splitters
+By default, a Slugger will split the supplied input into words based on
+whitespace, although a number of alternative word splitters are provided (and
+[the interface][word-splitter] is publicly exposed for extensibility).
+
+To replace the default splitter, use the `withWordSplitter(WordSplitter ws)`
+method as follows:
+
+    Slugger slugger = Slugger.create().withWordSplitter(WordSplitters.camelCaseWordSplitter());
+    slugger.sluggify("MyFirstBlogPost"); // my-first-blog-post
+
+Splitters can also be _chained_, so you can split on both whitespace and
+camel-case, as follows:
+
+    Slugger slugger = Slugger.create().withAdditionalWordSplitter(WordSplitters.camelCaseWordSplitter());
+    slugger.sluggify("The importance of toString()"); //the-importance-of-to-string
+
+
+[word-splitter]: src/main/java/com/eddarmitage/slugger/WordSplitter.java

@@ -27,7 +27,7 @@ public class CamelCaseWordSplitterTest {
 
     @Test
     public void testCamelCaseSplitter_splitsOnConsecutiveUppercaseLetters() {
-        assertThat(splitter.splitWords("iAmJeremiahDixonIAmAGeordieBoy")).hasSize(9);
+        assertThat(splitter.splitWords("IAmJeremiahDixonIAmAGeordieBoy")).hasSize(9);
     }
 
     @Test
