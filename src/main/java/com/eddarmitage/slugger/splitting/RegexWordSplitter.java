@@ -15,6 +15,6 @@ class RegexWordSplitter implements WordSplitter {
 
     @Override
     public Stream<String> splitWords(String input) {
-        return wordSplitPattern.splitAsStream(input);
+        return wordSplitPattern.splitAsStream(input).filter(word -> !word.isEmpty());
     }
 }

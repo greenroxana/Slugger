@@ -6,11 +6,17 @@ import java.util.regex.Pattern;
 
 public class WordSplitters {
 
-    private static final Pattern CAMEL_CASE_SPLIT_PATTERN = Pattern.compile("((?<=[a-z])(?=[A-Z])(?=[A-Z][a-z]))");
+    private static final Pattern WHITESPACE_WORD_PATTERN = Pattern.compile("\\s+");
+//    private static final Pattern CAMEL_CASE_SPLIT_PATTERN = Pattern.compile("((?<=[a-z])(?=[A-Z])(?=[A-Z][a-z]))");
+    private static final Pattern CAMEL_CASE_SPLIT_PATTERN = Pattern.compile("((?=[A-Z][a-z])|(?<=[a-z])(?=[A-Z])(?=[A-Z]))");
     private static final Pattern UNDERSCORE_SPLIT_PATTERN = Pattern.compile("_+");
 
     private WordSplitters() {
+        throw new AssertionError("Utility class not designed for instantiation");
+    }
 
+    public static WordSplitter whitespaceWordSplitter() {
+        return new RegexWordSplitter(WHITESPACE_WORD_PATTERN);
     }
 
     public static WordSplitter camelCaseWordSplitter() {
