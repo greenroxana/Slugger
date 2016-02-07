@@ -1,15 +1,13 @@
 package com.eddarmitage.slugger;
 
+import com.eddarmitage.slugger.splitting.WordSplitters;
+
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
 import java.util.Locale;
 import java.util.OptionalInt;
-import java.util.regex.Pattern;
 
 public class Slugger {
-    private static final Pattern WHITESPACE_WORD_PATTERN = Pattern.compile("\\s+");
-    private static final WordSplitter WHITESPACE_WORD_SPLITTER = WHITESPACE_WORD_PATTERN::splitAsStream;
-
     private static final String NOT_SLUG_CHARS_REGEX = "\\W";
     private static final String DEFAULT_SEPARATOR = "-";
 
@@ -34,7 +32,7 @@ public class Slugger {
     }
 
     public static Slugger create() {
-        return new Slugger(WHITESPACE_WORD_SPLITTER, OptionalInt.empty(), false, DEFAULT_SEPARATOR);
+        return new Slugger(WordSplitters.whitespaceWordSplitter(), OptionalInt.empty(), false, DEFAULT_SEPARATOR);
     }
 
     public Slugger withTargetLength(final int targetLength) {
