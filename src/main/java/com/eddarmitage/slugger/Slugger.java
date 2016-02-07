@@ -74,9 +74,9 @@ public class Slugger {
      * @param input the input string to be turned into a slug
      * @return The URL-safe slug
      */
-    public String slugify(final String input) {
+    public String sluggify(final String input) {
         if (input == null) {
-            throw new NullPointerException("Input to Slugger.slugify() is null");
+            throw new NullPointerException("Input to Slugger.sluggify() is null");
         }
 
         return wordSplitter.splitWords(input.trim())

@@ -42,7 +42,7 @@ public class StepDefinitions {
 
     @When("^the input string \"(.*)\" is sluggified$")
     public void sluffigyString(String input) {
-        output = slugger.slugify(input);
+        output = slugger.sluggify(input);
     }
 
     @Then("^the output will not contain any spaces$")
