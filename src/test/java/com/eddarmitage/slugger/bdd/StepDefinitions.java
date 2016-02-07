@@ -40,6 +40,11 @@ public class StepDefinitions {
         slugger = slugger.withAdditionalWordSplitter(WordSplitters.underscoreWordSplitter());
     }
 
+    @Given("^case will be preserved$")
+    public void case_will_be_preserved() throws Throwable {
+        slugger = slugger.withCasePreserved();
+    }
+
     @When("^the input string \"(.*)\" is sluggified$")
     public void sluffigyString(String input) {
         output = slugger.sluggify(input);
@@ -55,6 +60,7 @@ public class StepDefinitions {
         assertThat(output).as("Check \"%s\" is %d characters long", output, length).hasSize(length);
 
     }
+
     @Then("^the output will be no longer than (\\d+) characters long$")
     public void checkOutputIsShorterThanLength (Integer length) {
         assertThat(shouldBeLessOrEqual(output.length(), length)).as("Check length of \"%s\" is less than or equal to  %d", output, length);
