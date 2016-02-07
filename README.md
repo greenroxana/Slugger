@@ -1,5 +1,22 @@
+# Slugger - A Java library for creating nice URL Slugs
+
 [![Build Status](https://travis-ci.org/eddarmitage/Slugger.svg?branch=master)](https://travis-ci.org/eddarmitage/Slugger)
 [![Coverage Status](https://coveralls.io/repos/github/eddarmitage/Slugger/badge.svg?branch=master)](https://coveralls.io/github/eddarmitage/Slugger?branch=master)
 
-# Slugger
-A Java library for creating nice URL Slugs
+## Overview
+Instances of a `Slugger` object provide a way to generate _"slugs"_, that can
+be used in URLs on the web. Inputs can be split into words in a variety of ways
+and the length of the output can be restricted if required. Any `CharSequence`
+can be used as the joining character between consecutive words. Characters that
+would require escaping in a URL are removed or replaced, as appropriate.
+
+## Getting Started
+The simplest usage of `Slugger` would be something like the following:
+
+    Slugger slugger = Slugger.create();
+    String firstTitle = slugger.sluggify("My first blog post"); // my-first-blog-post
+    String secondTitle = slugger.sluggify("Another post!"); // another-post
+
+This creates an instance of a `Slugger` with the default configuration, which
+splits the input on whitespace, removes special characters, and converts the
+output to lowercase.
