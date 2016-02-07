@@ -23,23 +23,27 @@ class SlugBuilder {
 
     private final OptionalInt targetLength;
     private final boolean enforceHardLimit;
+    private final CharSequence separator;
     private final StringJoiner joiner;
 
     SlugBuilder(CharSequence separator) {
         this.targetLength = OptionalInt.empty();
         this.enforceHardLimit = false;
+        this.separator = separator;
         this.joiner = new StringJoiner(separator);
     }
 
     SlugBuilder(OptionalInt targetLength, boolean enforceHardLimit, CharSequence separator) {
         this.targetLength = targetLength;
         this.enforceHardLimit = enforceHardLimit;
+        this.separator = separator;
         joiner = new StringJoiner(separator);
     }
 
-    private SlugBuilder(OptionalInt targetLength, boolean enforceHardLimit, StringJoiner joiner) {
+    private SlugBuilder(OptionalInt targetLength, boolean enforceHardLimit, CharSequence separator, StringJoiner joiner) {
         this.targetLength = targetLength;
         this.enforceHardLimit = enforceHardLimit;
+        this.separator = separator;
         this.joiner = joiner;
     }
 
@@ -56,7 +60,7 @@ class SlugBuilder {
     }
 
     public SlugBuilder merge(SlugBuilder other) {
-        return new SlugBuilder(targetLength, enforceHardLimit, joiner.merge(other.joiner));
+        return new SlugBuilder(targetLength, enforceHardLimit, separator, joiner.merge(other.joiner));
     }
 
     public String build() {
@@ -72,7 +76,7 @@ class SlugBuilder {
     }
 
     private boolean wordWillFit(String word) {
-        return (targetLength.isPresent() && joiner.length() + word.length() <= targetLength.getAsInt()) || !targetLength.isPresent();
+        return !targetLength.isPresent() || joiner.length() + word.length() + separator.length() <= targetLength.getAsInt();
     }
 
     public static Collector<String, SlugBuilder, String> collector(OptionalInt targetLength, boolean enforceHardLimit, CharSequence separator) {
