@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/eddarmitage/Slugger.svg?branch=master)](https://travis-ci.org/eddarmitage/Slugger)
 [![Coverage Status](https://coveralls.io/repos/github/eddarmitage/Slugger/badge.svg?branch=master)](https://coveralls.io/github/eddarmitage/Slugger?branch=master)
+[![License](https://img.shields.io/github/license/eddarmitage/Slugger.svg)](LICENSE)
+
 
 ## Overview
 Instances of a `Slugger` object provide a way to generate _"slugs"_, that can
