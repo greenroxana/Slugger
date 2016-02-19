@@ -38,4 +38,12 @@ public class SluggerTest {
         Slugger slugger = Slugger.create().withAdditionalWordSplitter(WordSplitters.camelCaseWordSplitter());
         assertThat(slugger.sluggify("The importance of toString()")).isEqualTo("the-importance-of-to-string");
     }
+
+    @Test
+    public void testEnforcingHardLimitsWithNoTarget_causesException() {
+        assertThatExceptionOfType(IllegalArgumentException.class)
+                .isThrownBy(() -> Slugger.create().withHardLimitsEnforced())
+                .withMessage("Can't enforce hard limits without target length")
+                .withNoCause();
+    }
 }
