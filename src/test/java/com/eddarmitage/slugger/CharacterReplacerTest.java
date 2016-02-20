@@ -31,6 +31,13 @@ public class CharacterReplacerTest {
 
         assertThat(toLowerCaseReplacer.withCasePreserved().replaceCharacters(input))
                 .isEqualTo(preservedCaseReplacer.replaceCharacters(input));
+    }
 
+    @Test
+    public void testCharactersAreReplaced_whenSpecificReplacementIsGiven() {
+        CharacterReplacer characterReplacer = new CharacterReplacer(Locale.ENGLISH, false).withReplacement('ä', "a");
+
+        assertThat(characterReplacer.replaceCharacters("ständing in line to see the show tonight änd theres ä light on"))
+                .isEqualTo("standing in line to see the show tonight and theres a light on");
     }
 }

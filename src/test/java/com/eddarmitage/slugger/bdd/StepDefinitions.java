@@ -2,6 +2,7 @@ package com.eddarmitage.slugger.bdd;
 
 import com.eddarmitage.slugger.Slugger;
 import com.eddarmitage.slugger.splitting.WordSplitters;
+import cucumber.api.PendingException;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -45,14 +46,19 @@ public class StepDefinitions {
         slugger = slugger.withCasePreserved();
     }
 
+    @Given("^a replacement from '(.)' to \"(.+)\"$")
+    public void a_replacement(Character c, String replacement) throws Throwable {
+        slugger = slugger.withReplacement(c, replacement);
+    }
+
     @When("^the input string \"(.*)\" is sluggified$")
     public void sluffigyString(String input) {
         output = slugger.sluggify(input);
     }
 
-    @Then("^the output will not contain any spaces$")
-    public void checkOutputHasNoSpaces() {
-        assertThat(output).doesNotContain(" ");
+    @Then("^the output will not contain any '(.)' characters")
+    public void checkOutputHasNoSpaces(Character character) {
+        assertThat(output).doesNotContain(character.toString());
     }
 
     @Then("^the output will be (\\d+) characters long$")
