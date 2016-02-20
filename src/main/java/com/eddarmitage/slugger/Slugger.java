@@ -142,6 +142,17 @@ public class Slugger {
     }
 
     /**
+     * Returns a version of this slugger that replaces the specified character
+     *
+     * @param c  the character to be replaced
+     * @param replacement  the String to replace the character with
+     * @return a {@code Slugger} based on this slugger, but with an additional character replacement
+     */
+    public Slugger withReplacement(Character c, String replacement) {
+        return new Slugger(wordSplitter, targetLength, enforceHardLimit, separator, characterReplacer.withReplacement(c, replacement));
+    }
+
+    /**
      * Generates a slug-version of the provided input.
      * <p>
      * The output will nto contain any characters that require escaping for use

@@ -10,3 +10,9 @@ Feature: Remove characters in slugs, replacing them where appropriate
     When the input string "Hello World" is sluggified
     Then the output will contain a 'H' character
     And the output will contain a 'W' character
+
+  Scenario: Specific characters can be replaced with substitute strings
+    Given a replacement from 'u' to "oo"
+    When the input string "gu" is sluggified
+    Then the output will be 3 characters long
+    And the output will not contain any 'u' characters
