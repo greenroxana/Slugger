@@ -2,8 +2,6 @@ package com.eddarmitage.slugger;
 
 import com.eddarmitage.slugger.splitting.WordSplitters;
 
-import java.text.Normalizer;
-import java.text.Normalizer.Form;
 import java.util.Locale;
 import java.util.OptionalInt;
 import java.util.regex.Pattern;
@@ -26,11 +24,9 @@ public class Slugger {
      */
     private static final Pattern SAFE_CHARACTER_PATTERN = Pattern.compile("[a-zA-Z0-9_~.-]*");
 
-    private static final String NOT_SLUG_CHARS_REGEX = "\\W";
     private static final String DEFAULT_SEPARATOR = "-";
 
     private final WordSplitter wordSplitter;
-
     private final OptionalInt targetLength;
     private final boolean enforceHardLimit;
     private final CharSequence separator;
@@ -187,14 +183,8 @@ public class Slugger {
 
         return wordSplitter.splitWords(input.trim())
                 .map(characterReplacer::replaceCharacters)
-                .map(this::replaceNonSlugCharacters)
                 .filter(Slugger::containsOnlySafeCharacters)
                 .collect(SlugBuilder.collector(targetLength, enforceHardLimit, separator));
-    }
-
-    private String replaceNonSlugCharacters(String word) {
-        return Normalizer.normalize(word, Form.NFC)
-                .replaceAll(NOT_SLUG_CHARS_REGEX, "");
     }
 
     private static boolean containsOnlySafeCharacters(CharSequence input) {
