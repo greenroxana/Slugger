@@ -1,11 +1,15 @@
 package com.eddarmitage.slugger;
 
+import java.text.Normalizer;
+import java.text.Normalizer.Form;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
 class CharacterReplacer {
+
+    private static final String NOT_SLUG_CHARS_REGEX = "\\W";
 
     private final Locale locale;
     private final boolean preserveCase;
@@ -37,7 +41,12 @@ class CharacterReplacer {
         for (Entry<Character, String> replacement : replacements.entrySet()) {
             input = input.replaceAll(replacement.getKey().toString(), replacement.getValue());
         }
-        return changeCase(input);
+        return changeCase(replaceNonSlugCharacters(input));
+    }
+
+    private String replaceNonSlugCharacters(String word) {
+        return Normalizer.normalize(word, Form.NFC)
+                .replaceAll(NOT_SLUG_CHARS_REGEX, "");
     }
 
     private String changeCase(String word) {
