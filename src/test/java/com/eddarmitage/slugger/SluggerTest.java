@@ -9,7 +9,6 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class SluggerTest {
 
-
     @Test
     public void testNullInput_causesNullPointerException() {
         assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> Slugger.create().sluggify(null))

@@ -34,8 +34,7 @@ public class Slugger {
     private final OptionalInt targetLength;
     private final boolean enforceHardLimit;
     private final CharSequence separator;
-    private final boolean preserveCase;
-    private final Locale locale;
+    private CharacterReplacer characterReplacer;
 
 
     /**
@@ -44,13 +43,13 @@ public class Slugger {
      * @param targetLength  the target length that most slugs will not normally be longer than.
      * @param enforceHardLimit  force the slugs to be no longer than the target length
      * @param separator  the character sequence used to join consecutive words in the slug
+     * @param characterReplacer  the character replacer that will be used to remove illegal characters
      */
-    private Slugger(WordSplitter wordSplitter, OptionalInt targetLength, boolean enforceHardLimit, boolean preserveCase, CharSequence separator) {
+    private Slugger(WordSplitter wordSplitter, OptionalInt targetLength, boolean enforceHardLimit, CharSequence separator, CharacterReplacer characterReplacer) {
         this.wordSplitter = wordSplitter;
         this.targetLength = targetLength;
         this.enforceHardLimit = enforceHardLimit;
-        this.preserveCase = preserveCase;
-        this.locale = Locale.getDefault();
+        this.characterReplacer = characterReplacer;
         this.separator = separator;
     }
 
@@ -64,7 +63,7 @@ public class Slugger {
      * @return a basic Slugger
      */
     public static Slugger create() {
-        return new Slugger(WordSplitters.whitespaceWordSplitter(), OptionalInt.empty(), false, false, DEFAULT_SEPARATOR);
+        return new Slugger(WordSplitters.whitespaceWordSplitter(), OptionalInt.empty(), false, DEFAULT_SEPARATOR, new CharacterReplacer(Locale.getDefault(), false));
     }
 
     /**
@@ -79,7 +78,7 @@ public class Slugger {
      * @return a {@code Slugger} based on this slugger but with a target length
      */
     public Slugger withTargetLength(final int targetLength) {
-        return new Slugger(wordSplitter, OptionalInt.of(targetLength), enforceHardLimit, preserveCase, separator);
+        return new Slugger(wordSplitter, OptionalInt.of(targetLength), enforceHardLimit, separator, characterReplacer);
     }
 
     /**
@@ -96,7 +95,7 @@ public class Slugger {
         if (!targetLength.isPresent()) {
             throw new IllegalArgumentException("Can't enforce hard limits without target length");
         }
-        return new Slugger(wordSplitter, targetLength, true, preserveCase, separator);
+        return new Slugger(wordSplitter, targetLength, true, separator, characterReplacer);
     }
 
     /**
@@ -116,7 +115,7 @@ public class Slugger {
         if (!containsOnlySafeCharacters(separator)) {
             throw new IllegalArgumentException(String.format("Separator \"%s\" contains unsafe characters", separator));
         }
-        return new Slugger(wordSplitter, targetLength, enforceHardLimit, preserveCase, separator);
+        return new Slugger(wordSplitter, targetLength, enforceHardLimit, separator, characterReplacer);
     }
 
     /**
@@ -129,7 +128,7 @@ public class Slugger {
      * @return a {@code Slugger} based on this slugger but with the given {@code WordSplitter}
      */
     public Slugger withWordSplitter(WordSplitter wordSplitter) {
-        return new Slugger(wordSplitter, targetLength, enforceHardLimit, preserveCase, separator);
+        return new Slugger(wordSplitter, targetLength, enforceHardLimit, separator, characterReplacer);
     }
 
     /**
@@ -143,7 +142,7 @@ public class Slugger {
      * @return a {@code Slugger} based on this slugger but with the given {@code WordSplitter} chained to the current {@code WordSplitter}
      */
     public Slugger withAdditionalWordSplitter(WordSplitter additionalWordSplitter) {
-        return new Slugger(wordSplitter.withAdditionalSplitter(additionalWordSplitter), targetLength, enforceHardLimit, preserveCase, separator);
+        return new Slugger(wordSplitter.withAdditionalSplitter(additionalWordSplitter), targetLength, enforceHardLimit, separator, characterReplacer);
     }
 
     /**
@@ -155,7 +154,18 @@ public class Slugger {
      * @return a {@code Slugger} based on this slugger that preserves input case
      */
     public Slugger withCasePreserved() {
-        return new Slugger(wordSplitter, targetLength, enforceHardLimit, true, separator);
+        return new Slugger(wordSplitter, targetLength, enforceHardLimit, separator, characterReplacer.withCasePreserved());
+    }
+
+    /**
+     * Returns a version of this slugger that replaces the specified character
+     *
+     * @param c  the character to be replaced
+     * @param replacement  the String to replace the character with
+     * @return a {@code Slugger} based on this slugger, but with an additional character replacement
+     */
+    public Slugger withReplacement(Character c, String replacement) {
+        return new Slugger(wordSplitter, targetLength, enforceHardLimit, separator, characterReplacer.withReplacement(c, replacement));
     }
 
     /**
@@ -176,8 +186,8 @@ public class Slugger {
         }
 
         return wordSplitter.splitWords(input.trim())
+                .map(characterReplacer::replaceCharacters)
                 .map(this::replaceNonSlugCharacters)
-                .map(this::changeCase)
                 .filter(Slugger::containsOnlySafeCharacters)
                 .collect(SlugBuilder.collector(targetLength, enforceHardLimit, separator));
     }
@@ -185,10 +195,6 @@ public class Slugger {
     private String replaceNonSlugCharacters(String word) {
         return Normalizer.normalize(word, Form.NFC)
                 .replaceAll(NOT_SLUG_CHARS_REGEX, "");
-    }
-
-    private String changeCase(String word) {
-        return preserveCase ? word : word.toLowerCase(locale);
     }
 
     private static boolean containsOnlySafeCharacters(CharSequence input) {
