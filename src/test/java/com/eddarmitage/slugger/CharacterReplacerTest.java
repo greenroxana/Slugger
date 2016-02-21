@@ -11,15 +11,15 @@ public class CharacterReplacerTest {
     @Test
     public void testCharactersConvertedToLowercase_whenPreserveCaseDisabled() {
         CharacterReplacer characterReplacer = new CharacterReplacer(Locale.ENGLISH, false);
-        assertThat(characterReplacer.replaceCharacters("PsYcHiC SpIeS FrOm cHiNa tRy tO StEaL YoUr mInDs eLaTiOn"))
-                .isEqualTo("psychic spies from china try to steal your minds elation");
+        assertThat(characterReplacer.replaceCharacters("PsychicSpiesFromChinaTryToStealYourMindsElation"))
+                .isEqualTo("psychicspiesfromchinatrytostealyourmindselation");
     }
 
     @Test
     public void testCaseIsPreserved_whenPreserveCaseEnabled() {
         CharacterReplacer characterReplacer = new CharacterReplacer(Locale.ENGLISH, true);
-        assertThat(characterReplacer.replaceCharacters("SoMeTiMeS I FeEl lIkE I DoNt hAvE A PaRtNeR"))
-                .isEqualTo("SoMeTiMeS I FeEl lIkE I DoNt hAvE A PaRtNeR");
+        assertThat(characterReplacer.replaceCharacters("SometimesIFeelLikeIDontHaveAPartner"))
+                .isEqualTo("SometimesIFeelLikeIDontHaveAPartner");
     }
 
     @Test
@@ -27,7 +27,7 @@ public class CharacterReplacerTest {
         CharacterReplacer toLowerCaseReplacer = new CharacterReplacer(Locale.ENGLISH, false);
         CharacterReplacer preservedCaseReplacer = new CharacterReplacer(Locale.ENGLISH, true);
 
-        String input = "CaNt sToP AdDiCtEd tO ThIs sHiNdIg";
+        String input = "CantStopAddictedToThisShindig";
 
         assertThat(toLowerCaseReplacer.withCasePreserved().replaceCharacters(input))
                 .isEqualTo(preservedCaseReplacer.replaceCharacters(input));
@@ -35,9 +35,11 @@ public class CharacterReplacerTest {
 
     @Test
     public void testCharactersAreReplaced_whenSpecificReplacementIsGiven() {
-        CharacterReplacer characterReplacer = new CharacterReplacer(Locale.ENGLISH, false).withReplacement('ä', "a");
+        CharacterReplacer characterReplacer = new CharacterReplacer(Locale.ENGLISH, false)
+                .withReplacement('ä', "a")
+                .withReplacement('Ä', "A");
 
-        assertThat(characterReplacer.replaceCharacters("ständing in line to see the show tonight änd theres ä light on"))
-                .isEqualTo("standing in line to see the show tonight and theres a light on");
+        assertThat(characterReplacer.replaceCharacters("StändingInLineToSeeTheShowTonightÄndTheresÄLightOn"))
+                .isEqualTo("standinginlinetoseetheshowtonightandtheresalighton");
     }
 }
