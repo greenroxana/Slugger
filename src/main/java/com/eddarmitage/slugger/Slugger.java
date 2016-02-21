@@ -6,6 +6,7 @@ import java.text.Normalizer;
 import java.text.Normalizer.Form;
 import java.util.Locale;
 import java.util.OptionalInt;
+import java.util.regex.Pattern;
 
 /**
  * An object used to produce URL-friendly slugs
@@ -18,6 +19,13 @@ import java.util.OptionalInt;
  * removed or replaced, as appropriate.
  */
 public class Slugger {
+    /**
+     * Pattern that will only match Strings that consist entirely of the
+     * <em>unreserved characters</em> as defined in
+     * <a href="https://tools.ietf.org/html/rfc3986#section-2.3">RFC3986</a>.
+     */
+    private static final Pattern SAFE_CHARACTER_PATTERN = Pattern.compile("[a-zA-Z0-9_~.-]*");
+
     private static final String NOT_SLUG_CHARS_REGEX = "\\W";
     private static final String DEFAULT_SEPARATOR = "-";
 
@@ -31,6 +39,7 @@ public class Slugger {
 
     /**
      * Creates a {@code Slugger} with the given configuration.
+     *
      * @param targetLength  the target length that most slugs will not normally be longer than.
      * @param enforceHardLimit  force the slugs to be no longer than the target length
      * @param separator  the character sequence used to join consecutive words in the slug
@@ -92,13 +101,20 @@ public class Slugger {
     /**
      * Return a copy of this {@code Slugger} with the specified seperator sequence
      * <p>
-     * Specify the {@link CharSequence} that will be used to join words in the
-     * slug.
+     * The given {@link CharSequence} will be used to join words in the slug.
+     * The seperator cannot contain characters that are not part of the
+     * <em>unreserved characters</em> set as defined in
+     * <a href="https://tools.ietf.org/html/rfc3986#section-2.3">RFC3986</a>,
+     * so that the seperator will not need to be percent-escaped.
      *
      * @param separator  the separator to be used in slugs
      * @return a {@code Slugger} based on this slugger but with the given word-seperator
+     * @throws IllegalArgumentException if the separator contains characters outside of the unreserved set
      */
     public Slugger withSeparator(CharSequence separator) {
+        if (!containsOnlySafeCharacters(separator)) {
+            throw new IllegalArgumentException(String.format("Separator \"%s\" contains unsafe characters", separator));
+        }
         return new Slugger(wordSplitter, targetLength, enforceHardLimit, separator, characterReplacer);
     }
 
@@ -172,11 +188,16 @@ public class Slugger {
         return wordSplitter.splitWords(input.trim())
                 .map(characterReplacer::replaceCharacters)
                 .map(this::replaceNonSlugCharacters)
+                .filter(Slugger::containsOnlySafeCharacters)
                 .collect(SlugBuilder.collector(targetLength, enforceHardLimit, separator));
     }
 
     private String replaceNonSlugCharacters(String word) {
         return Normalizer.normalize(word, Form.NFC)
                 .replaceAll(NOT_SLUG_CHARS_REGEX, "");
+    }
+
+    private static boolean containsOnlySafeCharacters(CharSequence input) {
+        return SAFE_CHARACTER_PATTERN.matcher(input).matches();
     }
 }
