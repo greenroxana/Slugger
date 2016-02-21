@@ -16,6 +16,23 @@ public class SluggerTest {
                 .withNoCause();
     }
 
+
+    @Test
+    public void testEnforcingHardLimitsWithNoTarget_causesException() {
+        assertThatExceptionOfType(IllegalArgumentException.class)
+                .isThrownBy(() -> Slugger.create().withHardLimitsEnforced())
+                .withMessage("Can't enforce hard limits without target length")
+                .withNoCause();
+    }
+
+    @Test
+    public void testSeperatorWithEscapableCharacter_causesIllegalArgumentException() {
+        assertThatExceptionOfType(IllegalArgumentException.class)
+                .isThrownBy(() -> Slugger.create().withSeparator("@"))
+                .withMessage("Separator \"@\" contains unsafe characters")
+                .withNoCause();
+    }
+
     @Test
     public void testReadmeExamplesWork_simpleExample() {
         Slugger slugger = Slugger.create();
@@ -36,13 +53,5 @@ public class SluggerTest {
     public void testReadmeExamplesWork_additionalWordSplitterExample() {
         Slugger slugger = Slugger.create().withAdditionalWordSplitter(WordSplitters.camelCaseWordSplitter());
         assertThat(slugger.sluggify("The importance of toString()")).isEqualTo("the-importance-of-to-string");
-    }
-
-    @Test
-    public void testEnforcingHardLimitsWithNoTarget_causesException() {
-        assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> Slugger.create().withHardLimitsEnforced())
-                .withMessage("Can't enforce hard limits without target length")
-                .withNoCause();
     }
 }
