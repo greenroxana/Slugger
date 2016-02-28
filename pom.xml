@@ -12,6 +12,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <cucumber.version>1.2.4</cucumber.version>
     </properties>
 
     <dependencies>
@@ -30,14 +31,19 @@
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-java8</artifactId>
-            <version>1.2.4</version>
+            <version>${cucumber.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-junit</artifactId>
-            <version>1.2.4</version>
+            <version>${cucumber.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-picocontainer</artifactId>
+            <version>${cucumber.version}</version>
         </dependency>
     </dependencies>
 
