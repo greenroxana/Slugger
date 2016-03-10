@@ -42,6 +42,10 @@ jacocoTestReport {
     }
 }
 
+coveralls {
+    jacocoReportPath 'target/reports/jacoco/test/jacocoTestReport.xml'
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion = '2.11'
 }
