@@ -9,28 +9,28 @@ Feature: Slugs should be split into words correctly
   Scenario: Words should be split by whitespace
     When the input string "This is a title" is sluggified
     Then the output will not contain any ' ' characters
-    And the output will contain 3 '-' characters
+    And the output will contain 4 words
 
   Scenario: Words are not split by camel-case by default
     When the input string "The importance of toString()" is sluggified
     Then the output will not contain any ' ' characters
-    And the output will contain 3 '-' characters
+    And the output will contain 4 words
 
   Scenario: Words can be split by camel-case
     Given camel case splitting is enabled
     When the input string "The importance of toString()" is sluggified
     Then the output will not contain any ' ' characters
-    And the output will contain 4 '-' characters
+    And the output will contain 5 words
 
   Scenario: Words can be split by underscores
     Given underscore splitting is enabled
     When the input string "Why I love snake_case conventions" is sluggified
     Then the output will not contain any ' ' characters
-    And the output will contain 5 '-' characters
+    And the output will contain 6 words
 
   Scenario: Word-splitters can be combined
     Given camel case splitting is enabled
     And underscore splitting is enabled
     When the input string "Why I prefer camelCase to snake_case" is sluggified
     Then the output will not contain any ' ' characters
-    And the output will contain 7 '-' characters
+    And the output will contain 8 words
