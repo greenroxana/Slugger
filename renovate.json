@@ -3,5 +3,14 @@
     "config:base"
   ],
 
-  "gradle": { "enabled": true }
+  "gradle": { "enabled": true },
+  
+  "packageRules": [
+    {
+      "groupName": "cucumber",
+      "packagePatterns": [
+        "^io.cucumber:"
+      ]
+    }
+  ]
 }
